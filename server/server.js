@@ -65,8 +65,11 @@ io.on('connection', function(socket){
             rotation: playerSpawnPoints.position
         };
         clients.push(currentPlayer);
-        console.log(currentPlayer.name+' emit: plat: '+JSON.stringify(currentPlayer));
-        socket.broadcastl.emit('other player connected', currentPlayer);
+		// in your current game, tell you that you have joined
+		console.log(currentPlayer.name+' emit: play: '+JSON.stringify(currentPlayer));
+		socket.emit('play', currentPlayer);
+		// in your current game, we need to tell the other players about you.
+		socket.broadcast.emit('other player connected', currentPlayer);
     });
 
     socket.on('player move',function(data){
