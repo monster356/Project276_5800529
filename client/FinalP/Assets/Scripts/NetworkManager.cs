@@ -6,6 +6,7 @@ using SocketIO;
 
 public class NetworkManager : MonoBehaviour
 {
+    public Canvas canvas;
     public InputField playerNameInput;
     static SocketIOComponent socket;
     public GameObject playerPrefab;
@@ -13,13 +14,13 @@ public class NetworkManager : MonoBehaviour
 
     void Start()
     {
-
         socket = GetComponent<SocketIOComponent>();
-        socket.On("open", OnConnected);
-
-        socket.On("spawn", OnSpawn);
-
-        socket.On("move", OnMove);
+        socket.On("coins", OnSpawnCoins);
+        socket.On("other player connected",OnOtherPlayerConnected);
+        socket.On("play", OnPlay);
+        socket.On("player move", OnPlayerMove);
+        socket.On("player turn", OnPlayerTurn);
+		socket.On("other player disconnected", OnOtherPlayerDisconnect);
     }
 
     void Update()
@@ -33,28 +34,52 @@ public class NetworkManager : MonoBehaviour
     IEnumerator ConnectToServer()
     {
         yield return new WaitForSeconds(0.5f);
+        socket.Emit("player connect");
+        yield return new  WaitForSeconds(1.5f);
+        string playerName = playerNameInput.text;
+		List<SpawnPoint> playerSpawnPoints = GetComponent<PlayerSpawner>().playerSpawnPoints;
+		List<SpawnPoint> coinSpawnPoints = GetComponent<CoinSpawner>().CoinSpawnPoints;
+		PlayerJSON playerJSON = new PlayerJSON(playerName, playerSpawnPoints, coinSpawnPoints);
+		string data = JsonUtility.ToJson(playerJSON);
+		socket.Emit("play", new JSONObject(data));
+		canvas.gameObject.SetActive(false);    
+    }
+    void OnSpawnCoins(SocketIOEvent e)
+    {
 
     }
-
-    void OnConnected(SocketIOEvent e)
+    void OnOtherPlayerConnected(SocketIOEvent e)
     {
-        print("connected");
-
-        socket.Emit("move");
+print("Someone else joined");
+		string data = e.data.ToString();
+		UserJSON userJSON = UserJSON.CreateFromJSON(data);
+		Vector3 position = new Vector3(userJSON.position[0], userJSON.position[1], userJSON.position[2]);
+		Quaternion rotation = Quaternion.Euler(userJSON.rotation[0], userJSON.rotation[1], userJSON.rotation[2]);
+		GameObject o = GameObject.Find(userJSON.name) as GameObject;
+		if (o != null)
+		{
+			return;
+		}
+		GameObject p = Instantiate(playerPrefab, position, rotation) as GameObject;
+		// here we are setting up their other fields name and if they are local
+		PlayerController pc = p.GetComponent<PlayerController>();
+		
+    }
+    void OnPlay(SocketIOEvent e)
+    {
 
     }
-    void OnSpawn(SocketIOEvent e)
+    void OnPlayerMove(SocketIOEvent e)
     {
-        Vector3 position = new Vector3(0f, 1f, 0f);
-        print("spawned");
-
-        Instantiate(playerPrefab);
-        //socket.Emit("move");
 
     }
-    void OnMove(SocketIOEvent e)
+    void OnPlayerTurn(SocketIOEvent e)
     {
-        print("player is moving " + e.data);
+
+    }
+    void OnOtherPlayerDisconnect(SocketIOEvent e)
+    {
+
     }
 
     #region JSONMessageClasses
