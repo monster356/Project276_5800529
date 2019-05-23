@@ -8,8 +8,8 @@ var coins = [];
 var playerSpawnPoints = [];
 var clients = [];
 
-app.get('/', function(req, res){
-    res.send('HEllo')
+app.get('/', function(req, res) {
+	res.send('hey you got back get "/"');
 });
 
 io.on('connection', function(socket){
@@ -22,7 +22,8 @@ io.on('connection', function(socket){
             var playerConnected = {
                 name:clients[i].name,
                 position:clients[i].position,
-                rotation:clients[i].rotation
+                rotation:clients[i].rotation,
+                count:clients[i].count
             };   
             socket.emit('other player connected', playerConnected);
             console.log(currentPlayer.name+' emit: other player connected: '+ JSON.stringify(playerConnected));  
@@ -66,6 +67,45 @@ io.on('connection', function(socket){
         clients.push(currentPlayer);
         console.log(currentPlayer.name+' emit: plat: '+JSON.stringify(currentPlayer));
         socket.broadcastl.emit('other player connected', currentPlayer);
+    });
+
+    socket.on('player move',function(data){
+        console.log('recv: move: '+JSON.stringify(data));
+        currentPlayer.position = data.position;
+        socket.broadcast.emit('player move', currentPlayer);
+    });
+
+    socket.on('player turn', function(data){
+        console.log('recv: turn: '+JSON.stringify(data));
+        currentPlayer.rotation = data.rotation;
+        socket.broadcast.emit('player turn', currentPlayer);
+    });
+
+    socket.on('count',function(data){
+        console.log(currentPlayer.name+' rev: count'+JSON.stringify(data));
+        if(data.from === currentPlayer.name){
+            var indexDamaged = 0;
+            coins = coins.map(function(coin, index){
+                if(coin.name === data.name){
+                    indexDamaged = index;
+                    client.coin += data.coinChange;
+                }
+                return client;
+            });
+
+        }
+
+    });
+
+    socket.on('disconnect', function(data){
+        console.log(currentPlayer.name+' revc: disconnect '+ JSON.stringify(currentPlayer.name));
+        socket.broadcast.emit('other player disconnected',currentPlayer);
+        console.log(currentPlayer.name+' bcst: other player disconnected')+JSON.stringify(currentPlayer);
+        for(var i=0; i<clients.length; i++){
+            if(clients.[i].name === currentPlayer.name){
+                clients.splice(i,1);
+            }
+        }
     });
 });
 
