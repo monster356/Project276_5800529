@@ -88,7 +88,7 @@ io.on('connection', function(socket){
             coins = coins.map(function(coin, index){
                 if(coin.name === data.name){
                     indexDamaged = index;
-                    client.coin += data.coinChange;
+                    client.count += data.count;
                 }
                 return client;
             });
