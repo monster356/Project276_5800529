@@ -19,7 +19,7 @@ public class CoinSpawner : MonoBehaviour
             SpawnPoint CoinSpawnPoint = (Instantiate(spawnPoint,spawnPosition,spwanRotation) as GameObject).GetComponent<SpawnPoint>();
             CoinSpawnPoints.Add(CoinSpawnPoint);
         }
-        SpawnCoin();
+        //SpawnCoin();
     }
     public void SpawnCoin(){
 
