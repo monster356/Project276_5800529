@@ -949,6 +949,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6396004295047585118, guid: 18d6ba92712827f41a0acae9b125dffc,
+        type: 3}
+      propertyPath: m_Name
+      value: player
+      objectReference: {fileID: 0}
     - target: {fileID: 4943595229405255313, guid: 18d6ba92712827f41a0acae9b125dffc,
         type: 3}
       propertyPath: m_FontData.m_FontSize
@@ -1099,11 +1104,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6396004295047585118, guid: 18d6ba92712827f41a0acae9b125dffc,
-        type: 3}
-      propertyPath: m_Name
-      value: player
-      objectReference: {fileID: 0}
     - target: {fileID: 6396004295047585105, guid: 18d6ba92712827f41a0acae9b125dffc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1164,6 +1164,11 @@ PrefabInstance:
       propertyPath: countText
       value: 
       objectReference: {fileID: 645354569}
+    - target: {fileID: 6796366677115554265, guid: 18d6ba92712827f41a0acae9b125dffc,
+        type: 3}
+      propertyPath: winText
+      value: 
+      objectReference: {fileID: 1408358055}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 18d6ba92712827f41a0acae9b125dffc, type: 3}
 --- !u!1 &1311130314
@@ -1336,6 +1341,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1319177424}
   m_CullTransparentMesh: 0
+--- !u!114 &1408358055 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885368632228976569, guid: 18d6ba92712827f41a0acae9b125dffc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1089453071}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1457995504
 GameObject:
   m_ObjectHideFlags: 0
@@ -1517,6 +1534,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8188bc07087fdaf46b6d5192a6b20148, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coin: {fileID: 6953807873295063260, guid: bed158ea835dcb449ae4fdab1bacd3fc, type: 3}
+  spawnPoint: {fileID: 1145920163933540961, guid: ae53da5f45b3f104f81686c21fea9942,
+    type: 3}
+  numberOfCoins: 5
+  CoinSpawnPoints: []
 --- !u!1 &1736739059
 GameObject:
   m_ObjectHideFlags: 0
