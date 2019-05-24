@@ -16,7 +16,9 @@ namespace Project.Networking
         private GameObject playerPrefabs;
 
         public static string ClientID { get; private set; }
+
         private Dictionary<string, NetworkIdentity> serverObjects;
+
         private SocketIOComponent sc;
         public override void Start()
         {
@@ -71,7 +73,7 @@ namespace Project.Networking
 
             On("updatePosition", (E) =>
             {
-                string id = E.data["id"].ToString();
+                string id = E.data["id"].ToString().RemoveQuotes();
                 float x = E.data["position"]["x"].f;
                 float y = E.data["position"]["y"].f;
                 float z = E.data["position"]["z"].f;
@@ -94,6 +96,8 @@ namespace Project.Networking
             //canvas
             sc.Emit("reset");
         }
+        
+    }
         [Serializable]
         public class Player
         {
@@ -107,7 +111,5 @@ namespace Project.Networking
             public float y;
             public float z;
         }
-
-    }
 }
 

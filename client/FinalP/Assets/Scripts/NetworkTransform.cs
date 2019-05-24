@@ -14,7 +14,7 @@ namespace Project.Networking
         private Vector3 oldPosition;
 
         private NetworkIdentity networkIdentity;
-        private NetworkClient.Player player;
+        private Player player;
 
         private float stillCounter = 0;
 
@@ -23,10 +23,10 @@ namespace Project.Networking
         {
             networkIdentity = GetComponent<NetworkIdentity>();
             oldPosition = transform.position;
-            player = new NetworkClient.Player();
-            player.position = new NetworkClient.Position();
+            player = new Player();
+            player.position = new Position();
             player.position.x = 0;
-            player.position.y = 0;
+            player.position.y = 1;
             player.position.z = 0;
 
             if (!networkIdentity.IsControlling())
