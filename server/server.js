@@ -1,122 +1,43 @@
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(process.env.PORT || 3000);
 
-server.listen(3000);
+var Player = require('./Classes/Player.js');
 
-var coins = [];
-var playerSpawnPoints = [];
-var clients = [];
+console.log('Server started...');
 
-app.get('/', function(req, res) {
-	res.send('hey you got back get "/"');
-});
+var players = [];
+var sockets = [];
 
 io.on('connection', function(socket){
-    var currentPlayer = {};
-    currentPlayer.name = 'unknow';
+    console.log('Connection !!');
+    
+    var player = new Player();
+    var thisPlayerID = player.id;
 
-    socket.on('player connect', function(){
-        console.log(currentPlayer.name+' recv: player connect');
-        for(var i=0; i<clients.length;i++){
-            var playerConnected = {
-                name:clients[i].name,
-                position:clients[i].position,
-                rotation:clients[i].rotation,
-                count:clients[i].count
-            };   
-            socket.emit('other player connected', playerConnected);
-            console.log(currentPlayer.name+' emit: other player connected: '+ JSON.stringify(playerConnected));  
-        }    
-    });
+    players[thisPlayerID] = player;
+    sockets[thisPlayerID] = socket;
 
-    socket.on('play', function(data){
-        console.log(currentPlayer.name+' recv: play: '+JSON.stringify(data));
-        if(clients.length === 0){
-            numberOfCoins = data.coinSpawnPoints.length;
-            coins = [];
-            data.coinSpawnPoints.forEach(function(coinSpawnPoints){
-                var coin = {
-                    name: guid(),
-                    position: coinSpawnPoints.position,
-                    rotation: coinSpawnPoints.rotation
-                };
-                coins.push(coin);
-            });
-            playerSpawnPoints = [];
-            data.playerSpawnPoints.forEach(function(_playerSpawnPoint){
-                var playSpawnPoint = {
-                    position: _playerSpawnPoint.position,
-                    rotation: _playerSpawnPoint.rotation
-                };
-                playSpawnPoints.push(playSpawnPoint);
-            });  
+    socket.emit('register', {id: thisPlayerID});
+    socket.emit('spawn', player);
+    socket.broadcast.emit('spawn', player);
+
+    for(var playerID in players){
+        if(playerID != thisPlayerID){
+            socket.emit('spawn', player[playerID]);
         }
+    }
 
-        var coinsResponse = {
-            coins: coins
-        };
-        console.log(currentPlayer.name+' emit: coins: '+JSON.stringify(coinsResponse));
-        socket.emit('coins', coinsResponse);
-        var randomSpawnPoint = playerSpawnPoints[Math.floor(Math.random()* playerSpawnPoints.length)];
-        currentPlayer = {
-            name:data.name,
-            position: randomSpawnPoint.position,
-            rotation: playerSpawnPoints.position
-        };
-        clients.push(currentPlayer);
-		// in your current game, tell you that you have joined
-		console.log(currentPlayer.name+' emit: play: '+JSON.stringify(currentPlayer));
-		socket.emit('play', currentPlayer);
-		// in your current game, we need to tell the other players about you.
-		socket.broadcast.emit('other player connected', currentPlayer);
-    });
-
-    socket.on('player move',function(data){
-        console.log('recv: move: '+JSON.stringify(data));
-        currentPlayer.position = data.position;
-        socket.broadcast.emit('player move', currentPlayer);
-    });
-
-    socket.on('player turn', function(data){
-        console.log('recv: turn: '+JSON.stringify(data));
-        currentPlayer.rotation = data.rotation;
-        socket.broadcast.emit('player turn', currentPlayer);
-    });
-
-    socket.on('count',function(data){
-        console.log(currentPlayer.name+' rev: count'+JSON.stringify(data));
-        if(data.from === currentPlayer.name){
-            var indexDamaged = 0;
-            coins = coins.map(function(coin, index){
-                if(coin.name === data.name){
-                    indexDamaged = index;
-                    client.count += data.count;
-                }
-                return client;
-            });
-
-        }
-
+    socket.on('updatePosition', function(data){
+        player.position.x = data.position.x;
+        player.position.y = data.position.y;
+        player.position.z = data.position.z;
+        console.log(data);
+        socket.broadcast.emit('updatePosition', player);
     });
 
     socket.on('disconnect', function(data){
-        console.log(currentPlayer.name+' revc: disconnect '+ JSON.stringify(currentPlayer.name));
-        socket.broadcast.emit('other player disconnected',currentPlayer);
-        console.log(currentPlayer.name+' bcst: other player disconnected')+JSON.stringify(currentPlayer);
-        for(var i=0; i<clients.length; i++){
-            if(clients.[i].name === currentPlayer.name){
-                clients.splice(i,1);
-            }
-        }
+        console.log('Player disconnect');
+        delete players[thisPlayerID];
+        delete sockets[thisPlayerID];
+        socket.broadcast.emit('disconnected', player);
     });
 });
-
-console.log('Server is running.....');
-
-function guid(){
-    function s4(){
-        return Math.floor((1+Math.random())*0x10000).toString(16).substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-'+ s4() + '-' + s4() + s4() + s4();
-};
