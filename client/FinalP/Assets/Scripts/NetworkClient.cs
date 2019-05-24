@@ -17,11 +17,12 @@ namespace Project.Networking
 
         public static string ClientID { get; private set; }
         private Dictionary<string, NetworkIdentity> serverObjects;
+        private SocketIOComponent sc;
         public override void Start()
         {
             base.Start();
             initialize();
-            setupEven();
+            setupEvent();
         }
 
         public override void Update()
@@ -34,7 +35,7 @@ namespace Project.Networking
             serverObjects = new Dictionary<string, NetworkIdentity>();
         }
 
-        private void setupEven()
+        private void setupEvent()
         {
             On("open", (E) =>
             {
@@ -43,7 +44,7 @@ namespace Project.Networking
 
             On("register", (E) =>
             {
-                ClientID = E.data["id"].ToString().RemoveQuotes();
+                ClientID = E.data["id"].ToString();
                 Debug.LogFormat("Your Client's ID ({0})", ClientID);
             });
 
@@ -52,7 +53,7 @@ namespace Project.Networking
                 string id = E.data["id"].ToString().RemoveQuotes();
 
                 GameObject go = Instantiate(playerPrefabs, networkContainer);
-                go.name = string.Format("Plyer ({0})", id);
+                go.name = string.Format("Player ({0})", id);
                 NetworkIdentity ni = go.GetComponent<NetworkIdentity>();
                 ni.SetControllerID(id);
                 ni.SetSocketReference(this);
@@ -70,7 +71,7 @@ namespace Project.Networking
 
             On("updatePosition", (E) =>
             {
-                string id = E.data["id"].ToString().RemoveQuotes();
+                string id = E.data["id"].ToString();
                 float x = E.data["position"]["x"].f;
                 float y = E.data["position"]["y"].f;
                 float z = E.data["position"]["z"].f;
@@ -79,9 +80,20 @@ namespace Project.Networking
                 ni.transform.position = new Vector3(x, y, z);
 
             });
+            On("playerWin", (E) =>
+            {
+                string id = E.data["id"].ToString().RemoveQuotes();
 
+                gameStop(id);
+
+            });
         }
 
+        public void gameStop(string id)
+        {
+            //canvas
+            sc.Emit("reset");
+        }
         [Serializable]
         public class Player
         {

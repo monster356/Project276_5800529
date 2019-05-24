@@ -8,7 +8,7 @@ var players = [];
 var sockets = [];
 
 io.on('connection', function(socket){
-    console.log('Connection !!');
+    console.log('clientConnection !!');
     
     var player = new Player();
     var thisPlayerID = player.id;
@@ -19,6 +19,7 @@ io.on('connection', function(socket){
     socket.emit('register', {id: thisPlayerID});
     socket.emit('spawn', player);
     socket.broadcast.emit('spawn', player);
+    
 
     for(var playerID in players){
         if(playerID != thisPlayerID){
@@ -34,8 +35,15 @@ io.on('connection', function(socket){
         socket.broadcast.emit('updatePosition', player);
     });
 
+    socket.on('updatePoint', function(data){
+        player.point += data.point;
+        if(player.point >= 20){
+            socket.broadcast.emit('playerWin', player)
+        }
+    });
+
     socket.on('disconnect', function(data){
-        console.log('Player disconnect');
+        console.log('Player '+player.id+' disconnect');
         delete players[thisPlayerID];
         delete sockets[thisPlayerID];
         socket.broadcast.emit('disconnected', player);

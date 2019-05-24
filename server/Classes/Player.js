@@ -4,6 +4,7 @@ module.exports = class Player{
     constructor(){
         this.username = '';
         this.id = shortID.generate();
-        this.position = new Vector3();      
+        this.position = new Vector3();     
+        this.point = 0; 
     }
 }

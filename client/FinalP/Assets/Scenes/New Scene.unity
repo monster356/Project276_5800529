@@ -141,14 +141,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2181c880e7bd734d8fadcf53f44861d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  url: ws://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket
+  url: ws://34.87.33.121:3000/socket.io/?EIO=4&transport=websocket
   autoConnect: 1
   reconnectDelay: 5
   ackExpirationTime: 1800
   pingInterval: 25
   pingTimeout: 60
   networkContainer: {fileID: 2122150019}
-  playerPrefabs: {fileID: 7998998616958102282, guid: 18d6ba92712827f41a0acae9b125dffc,
+  playerPrefabs: {fileID: 8102911142304077414, guid: 66ec24130ef3f624fadc3085f18895f4,
     type: 3}
 --- !u!4 &65364085
 Transform:
