@@ -30,7 +30,7 @@ public class NetworkManager : MonoBehaviour
         socket.On("coin", OnCoin);
         socket.On("other player connected", OnOtherPlayerConnected);
         socket.On("play", OnPlay);
-        socket.On("player move", OnPlayerMove); 
+        socket.On("player move", OnPlayerMove);
         socket.On("other player disconnected", OnOtherPlayerDisconnect);
         
     }
@@ -40,15 +40,10 @@ public class NetworkManager : MonoBehaviour
     }
     IEnumerator Restart()
     {
-        yield return new WaitForSeconds(2f);
-        
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void QuitGame()
-    {
+        yield return new WaitForSeconds(0.5f);
         Application.Quit();
     }
+
 
     public void JoinGame()
     {
@@ -136,7 +131,6 @@ public class NetworkManager : MonoBehaviour
         UserJSON userJSON = UserJSON.CreateFromJSON(data);
         Destroy(GameObject.Find(userJSON.name));
     }
-
 
 }
 [Serializable]

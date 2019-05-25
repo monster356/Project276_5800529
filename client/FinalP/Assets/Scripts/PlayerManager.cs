@@ -60,10 +60,11 @@ public class PlayerManager : MonoBehaviour
         NetworkManager.instance.countText.text = "Point : " + count.ToString();
         if (count >= 20)
         {
+            
             NetworkManager.instance.inGame.gameObject.SetActive(false);
             NetworkManager.instance.endGame.gameObject.SetActive(true);
             NetworkManager.instance.winnerText.text = "You Win!";
-            NetworkManager.instance.Endgame();
+            Destroy(gameObject);
         }
     }
 }
