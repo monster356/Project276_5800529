@@ -85,6 +85,7 @@ io.on('connection', function(socket){
 	});
 
     socket.on('disconnect', function() {
+        console.log(currentPlayer.name+': logout');
 		socket.broadcast.emit('other player disconnected', currentPlayer);
 		for(var i=0; i<clients.length; i++) {
 			if(clients[i].name === currentPlayer.name) {

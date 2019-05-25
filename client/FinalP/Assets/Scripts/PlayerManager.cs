@@ -6,26 +6,23 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
-    public Canvas ingame, Endgame;
-    public Text countText, winnerText;
-    public Text playerName;
     public bool isLocalPlayer = false;
 
     Vector3 oldPosition;
     Vector3 currentPosition;
     public int speed;
     public int point;
-    public int count;
+    int count;
 
     // Use this for initialization
     void Start()
     {
-        ingame.gameObject.SetActive(true);
-        Endgame.gameObject.SetActive(false);
+        NetworkManager.instance.inGame.gameObject.SetActive(true);
+        NetworkManager.instance.endGame.gameObject.SetActive(false);
         oldPosition = transform.position;
         currentPosition = oldPosition;
         count = 0;
-        playerName.text = NetworkManager.instance.playerNameInput.text;
+        NetworkManager.instance.countText.text = "Point : " + count.ToString(); 
     }
 
     void Update()
@@ -60,12 +57,12 @@ public class PlayerManager : MonoBehaviour
     }
     void SetCountText()
     {
-        countText.text = "Point : " + count.ToString();
+        NetworkManager.instance.countText.text = "Point : " + count.ToString();
         if (count >= 20)
         {
-            ingame.gameObject.SetActive(false);
-            Endgame.gameObject.SetActive(true);
-            winnerText.text = "You Win!";
+            NetworkManager.instance.inGame.gameObject.SetActive(false);
+            NetworkManager.instance.endGame.gameObject.SetActive(true);
+            NetworkManager.instance.winnerText.text = "You Win!";
             NetworkManager.instance.Endgame();
         }
     }

@@ -10,7 +10,8 @@ public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager instance;
     public SocketIOComponent socket;
-    public Canvas canvas;
+    public Canvas canvas,inGame,endGame;
+    public Text winnerText, countText,playerNameText;
     public InputField playerNameInput;
     public GameObject player;
 
@@ -24,13 +25,14 @@ public class NetworkManager : MonoBehaviour
     }
 
     void Start()
-    {
-      
+    {   
+        
         socket.On("coin", OnCoin);
         socket.On("other player connected", OnOtherPlayerConnected);
         socket.On("play", OnPlay);
         socket.On("player move", OnPlayerMove); 
         socket.On("other player disconnected", OnOtherPlayerDisconnect);
+        
     }
     public void Endgame()
     {
@@ -39,9 +41,15 @@ public class NetworkManager : MonoBehaviour
     IEnumerator Restart()
     {
         yield return new WaitForSeconds(2f);
-        socket.Emit("disconnect");
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void JoinGame()
     {
         StartCoroutine(ConnectToServ());
@@ -58,6 +66,7 @@ public class NetworkManager : MonoBehaviour
         PlayerJSON playerJSON = new PlayerJSON(playerName, playerSpawnPoints, coinSpawnPoints);
         string data = JsonUtility.ToJson(playerJSON);
         socket.Emit("play", new JSONObject(data));
+        playerNameText.text = playerNameInput.text;
         canvas.gameObject.SetActive(false);
     }
     public void CommandMove(Vector3 vec3)
