@@ -10,21 +10,32 @@ public class PlayerManager : MonoBehaviour
     public int point=0;
     public Text countText;
     public Canvas ingame, endgame;
-    public Text Win;    
+    public Text Win;
 
-        public void Start()
-        {
+    [SerializeField]
+    private NetworkIdentity networkIdentity;
+
+    public void Start()
+    {
             
             point = 0;
-        }
+    }
 
-        public void FixedUpdate()
+    public void Update()
+    {
+        if (networkIdentity.IsControlling())
         {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            transform.position += new Vector3(horizontal,0f , vertical) * speed * Time.deltaTime;
+            checkMovement();
         }
+    }
+
+        private void checkMovement()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        transform.position += new Vector3(horizontal, 0f, vertical) * speed * Time.deltaTime;
+    }
 
         void OnTriggerEnter(Collider other)
         {

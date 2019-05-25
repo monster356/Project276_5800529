@@ -1,4 +1,8 @@
-var io = require('socket.io')(process.env.PORT || 3000);
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(3000);
 
 var Player = require('./Classes/Player.js');
 
@@ -23,7 +27,7 @@ io.on('connection', function(socket){
 
     for(var playerID in players){
         if(playerID != thisPlayerID){
-            socket.emit('spawn', player[playerID]);
+            socket.emit('spawn', players[playerID]);
         }
     }
 
@@ -31,7 +35,7 @@ io.on('connection', function(socket){
         player.position.x = data.position.x;
         player.position.y = data.position.y;
         player.position.z = data.position.z; 
-        
+        console.log(data);
         socket.broadcast.emit('updatePosition', player);
     });
 
@@ -42,7 +46,7 @@ io.on('connection', function(socket){
         }
     });
 
-    socket.on('disconnect', function(data){
+    socket.on('disconnect', function(){
         console.log('Player '+player.id+' disconnect');
         delete players[thisPlayerID];
         delete sockets[thisPlayerID];
